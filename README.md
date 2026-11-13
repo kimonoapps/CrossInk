@@ -92,6 +92,72 @@ See [Controls](./docs/controls.md) for the full action list and defaults.
 
 ---
 
+## Kimono Read
+
+This fork (`kimonoapps/CrossInk`, branch `feat/kimono`) turns the reader into
+**Kimono Read**: it pairs with your own Kimono, shows your Kimono Books shelf,
+sends your reading progress back, and downloads EPUBs from your Kimono Drive.
+Nothing is ever typed on the reader; the phone does the typing.
+
+### Server
+
+A Kimono Portal with Kimono Read pairing (`/api/v1/devices/*`, `/read/setup`,
+`/read/pair`). Nothing else to configure: no Authentik changes are needed.
+
+### Setting it up
+
+1. Home > **Kimono Read**. With no pairing, it shows **Set up with your phone**,
+   a QR code and a Wi-Fi name, `Kimono Read-XXXX` (an open hotspot run by the
+   reader).
+2. Easiest: on the phone, open Kimono > You > **Set up Kimono Read** (or
+   `https://<your kimono>/read/setup` in a browser). It makes a one-time setup
+   link while the phone is still online.
+3. Join the `Kimono Read-XXXX` Wi-Fi on the phone (scan the QR code with the
+   camera, or pick it in Wi-Fi settings), go back to Kimono, and tap
+   **Continue on the reader**. The reader's page opens with your Kimono's
+   address filled in: pick your home Wi-Fi, type its password, Connect.
+4. The reader joins that Wi-Fi and pairs itself with the link's one-time
+   ticket. Its shelf appears.
+
+Without the phone app, scanning the reader's QR code opens the same page as a
+captive sheet; it then also asks for your Kimono's address (typed on the
+phone). After joining Wi-Fi, the reader shows a pairing QR code and a
+six-character code: scan it with a phone signed in to Kimono and tap
+**Pair**, or type the code at `https://<your kimono>/read/pair`. The reader
+starts at that step when it already has Wi-Fi but no pairing (after being
+unpaired, for instance).
+
+Paired readers are listed under You > Signed-in devices on the web (rename or
+unpair) and in the phone's Set up Kimono Read screen. Unpairing, or signing
+out everywhere, stops the reader's token at once; the reader then asks to be
+paired again.
+
+### Using it
+
+- Opening Kimono Read joins a saved Wi-Fi network by itself (no Wi-Fi picker),
+  sends any queued reading progress and pulls the shelf. The menu lists
+  **Reading**, **Want to read**, **Read**, **Kimono Drive**, **Sync now** (with
+  "Synced N min ago"), **Set up Wi-Fi again** and **Unpair this reader**.
+- A shelf book offers *Open* (when it is on the card), *Find in Kimono Drive*
+  (EPUBs in your Drive whose name holds the title), and moving it between
+  shelves or off the shelf. A book downloaded that way is linked to that shelf
+  book, so its progress goes to it.
+- *Kimono Drive* lists the spaces you own, their folders and the EPUBs in them.
+  Downloads go to `/Kimono/` on the card.
+- Reading progress is queued each time the reader saves its place (every few
+  page turns, after a few minutes, and on leaving a book). The radio is off
+  while reading, so the queue is sent when the reader goes to sleep (it joins
+  the last Wi-Fi network for up to 10 seconds, only when something is queued
+  and the battery is at 10% or more) and every time Kimono Read opens. A book
+  is matched by its link, else by its EPUB's ISBN, else by a title that
+  matches exactly one shelf book. At 98% or more Kimono marks it *Read*.
+- Every call carries `X-Kimono-Device: kimono-read/silkscreen; id=<eFuse MAC>`
+  (the profile's Kimono Read badge). The device token is scoped by the Portal
+  to Kimono Books and Drive reads.
+- The reader keeps the server address, its device token and the last sync time
+  in NVS (namespace `kimono`); Wi-Fi joins the reader's saved networks. Queued
+  progress and links live in `/.crosspoint/kimono/` on the card.
+
 ## Tips for the best reading experience
 
 CrossInk runs on a small, low-power chip with limited memory (especially on the Xteink X3 and X4), so very large folders or complex EPUBs can be slower than they would be on a phone, tablet, or computer.

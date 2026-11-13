@@ -82,7 +82,7 @@ void catalogCenteredBlock(UiAppHost<24, 6>::Screen& screen, const std::initializ
 }
 
 void catalogDownloadScreen(UiAppHost<24, 6>::Screen& screen, const char* status, const size_t progress,
-                           const size_t total, const fui::ActionId cancelAction) {
+                           const size_t total, const fui::ActionId cancelAction, const char* heading) {
   // Centered block: status line, item title, progress, optional cancel.
   const auto& theme = screen.theme();
   fui::TextStyle centered = theme.bodyText;
@@ -103,7 +103,7 @@ void catalogDownloadScreen(UiAppHost<24, 6>::Screen& screen, const char* status,
   const fui::Rect body = screen.body();
   if (body.height > blockH) screen.spacer(static_cast<int16_t>((body.height - blockH) / 2));
 
-  screen.target().text(screen.takeTop(lh, gap), tr(STR_DOWNLOADING), centered);
+  screen.target().text(screen.takeTop(lh, gap), heading ? heading : tr(STR_DOWNLOADING), centered);
   screen.target().text(screen.takeTop(titleH, gap).inset(fui::Insets{0, pad, 0, pad}), status, title);
 
   const fui::Rect progressArea = screen.takeTop(progressH, gap).inset(fui::Insets{0, 50, 0, 50});

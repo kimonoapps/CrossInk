@@ -205,7 +205,7 @@ void CatalogActivity::onDownloadProgress(const size_t downloaded, const size_t t
 HttpDownloader::DownloadError CatalogActivity::downloadFile(const std::string& url, const std::string& dest,
                                                             const std::string& user, const std::string& password,
                                                             const std::vector<HttpDownloader::Header>& headers,
-                                                            HttpDownloader::Transport transport) {
+                                                            HttpDownloader::Transport transport, const bool resumable) {
   {
     RenderLock lock;
     downloadProgress = downloadTotal = 0;
@@ -231,6 +231,9 @@ HttpDownloader::DownloadError CatalogActivity::downloadFile(const std::string& u
   HttpDownloader::DownloadOptions options;
   options.transport = transport;
   options.stageAsPart = true;
+  // Resumable: an interrupted transfer keeps its .part file and continues with a Range request.
+  options.preservePartial = resumable;
+  options.resumePartial = resumable;
   options.checkFreeSpace = true;
   options.headers = &headers;
   options.shouldCancel = [this] {
@@ -267,7 +270,7 @@ bool CatalogActivity::buildStatusScreen(UiScreen& screen, const bool boldError, 
   switch (state) {
     case State::DOWNLOADING:
       catalogDownloadScreen(screen, statusMessage.c_str(), downloadProgress, showDownloadTotal ? downloadTotal : 0,
-                            ACTION_CANCEL);
+                            ACTION_CANCEL, downloadHeading);
       break;
     case State::ERROR:
       if (mappedInput.hasTouch()) {

@@ -169,6 +169,7 @@ class ActivityManager {
   void goToLibrary();
   void goToBrowser();
   bool goToPlugins(bool networkBootReady = false);
+  bool goToKimono(bool networkBootReady = false);
   bool goToOpdsServer(uint32_t serverIndex, bool networkBootReady = false);
   void goToReader(std::string path, bool suppressBackRelease = false, bool allowFastInitialRefresh = false,
                   bool cleanImageBaseOnEntry = false, bool keepWakeFrame = false);

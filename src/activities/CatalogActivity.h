@@ -37,6 +37,7 @@ class CatalogActivity : public UiListActivity {
   size_t downloadProgress = 0, downloadTotal = 0;
   bool cancelDownload = false;
   bool radioReleased = false;
+  const char* downloadHeading = nullptr;  // the progress screen's heading; null = "Downloading"
 
   virtual void startBrowse() = 0;
   virtual void retryBrowse() { startBrowse(); }
@@ -65,7 +66,8 @@ class CatalogActivity : public UiListActivity {
   HttpDownloader::DownloadError downloadFile(const std::string& url, const std::string& dest,
                                              const std::string& user = {}, const std::string& password = {},
                                              const std::vector<HttpDownloader::Header>& headers = {},
-                                             HttpDownloader::Transport transport = HttpDownloader::Transport::WOLFSSL);
+                                             HttpDownloader::Transport transport = HttpDownloader::Transport::WOLFSSL,
+                                             bool resumable = false);
   void onDownloadProgress(size_t downloaded, size_t total);
   void screenHeader(UiScreen& screen, const char* title);
   bool buildStatusScreen(UiScreen& screen, bool boldError = true, bool showDownloadTotal = false);

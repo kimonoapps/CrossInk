@@ -1,5 +1,6 @@
 #include "ActivityManager.h"
 
+#include "activities/kimono/KimonoActivity.h"
 #include "activities/plugins/PluginCatalogActivity.h"
 
 #if CROSSINK_SCALABLE_FONTS
@@ -1105,6 +1106,24 @@ bool ActivityManager::goToPlugins(const bool networkBootReady) {
     return false;
   }
   replaceActivity(std::move(plugins));
+  return true;
+}
+
+bool ActivityManager::goToKimono(const bool networkBootReady) {
+#ifndef SIMULATOR
+  if (!networkBootReady) {
+    silentRestartToNetwork(NetworkBootTarget::KIMONO);
+    return true;
+  }
+#else
+  (void)networkBootReady;
+#endif
+  auto kimono = makeUniqueNoThrow<KimonoActivity>(renderer, mappedInput);
+  if (!kimono) {
+    LOG_ERR("ACT", "Cannot allocate Kimono activity (free=%u maxAlloc=%u)", ESP.getFreeHeap(), ESP.getMaxAllocHeap());
+    return false;
+  }
+  replaceActivity(std::move(kimono));
   return true;
 }
 
