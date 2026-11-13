@@ -75,6 +75,7 @@ enum class HomeMenuAction {
   Bookmarks,
   FileTransfer,
   Settings,
+  Kimono,
 };
 
 struct HomeMenuEntry {
@@ -84,7 +85,7 @@ struct HomeMenuEntry {
 };
 
 struct HomeMenuEntries {
-  static constexpr int kCapacity = 8;
+  static constexpr int kCapacity = 9;
   std::array<HomeMenuEntry, kCapacity> entries{};
   int count = 0;
 
@@ -249,6 +250,7 @@ void appendHomeMenuItems(HomeMenuEntries& items, bool hasPlugins, bool hasReadin
                          bool hasClippings) {
   items.push({tr(STR_BROWSE_FILES), Folder, HomeMenuAction::BrowseFiles});
   items.push({tr(STR_LIBRARY), Library, HomeMenuAction::Library});
+  items.push({tr(STR_KIMONO), Opds, HomeMenuAction::Kimono});
 
   if (hasPlugins) {
     items.push({tr(STR_PLUGINS), UIIcon::Plugins, HomeMenuAction::Plugins});
@@ -1536,6 +1538,9 @@ void HomeActivity::loop() {
           case HomeMenuAction::FileTransfer:
             onFileTransferOpen();
             break;
+          case HomeMenuAction::Kimono:
+            activityManager.goToKimono();
+            break;
           case HomeMenuAction::ContinueReading:
           case HomeMenuAction::Settings:
             break;
@@ -1789,6 +1794,9 @@ void HomeActivity::loop() {
         break;
       case HomeMenuAction::Settings:
         onSettingsOpen();
+        break;
+      case HomeMenuAction::Kimono:
+        activityManager.goToKimono();
         break;
     }
   };

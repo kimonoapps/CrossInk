@@ -63,6 +63,7 @@
 #include "ReaderUtils.h"
 #include "ReadingPace.h"
 #include "ReadingSessionStats.h"
+#include "kimono/KimonoProgress.h"
 #include "RecentBooksStore.h"
 #include "SdCardFont.h"
 #include "SdCardFontSystem.h"
@@ -7554,6 +7555,11 @@ bool EpubReaderActivity::saveProgress(int spineIndex, int currentPage, int pageC
     // Home reads this lightweight value instead of opening the EPUB, so keep it
     // in sync with the position file written above.
     RecentBookProgress::saveCachedEpubPercent(*epub, spineIndex, currentPage, pageCount);
+    // Kimono Books: queue the new place (sent at sleep or from the Kimono screen).
+    if (pageCount > 0) {
+      const float chapterRead = static_cast<float>(currentPage + 1) / static_cast<float>(pageCount);
+      kimono::progress::note(*epub, epub->calculateProgress(spineIndex, chapterRead));
+    }
     const uint32_t positionKey = (static_cast<uint32_t>(spineIndex) << 16) | static_cast<uint16_t>(currentPage);
     progressSaveDebouncer.markPersisted(positionKey, static_cast<uint32_t>(pageCount));
     pendingSyncDue.store(true, std::memory_order_relaxed);

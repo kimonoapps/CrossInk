@@ -100,6 +100,7 @@ inline esp_sleep_wakeup_cause_t esp_sleep_get_wakeup_cause() { return ESP_SLEEP_
 #include "OpdsServerStore.h"
 #include "RecentBooksStore.h"
 #include "SdCardFontSystem.h"
+#include "kimono/KimonoProgress.h"
 #include "SilentRestart.h"
 #include "activities/Activity.h"
 #include "activities/ActivityManager.h"
@@ -1394,6 +1395,9 @@ void enterDeepSleep(bool fromTimeout) {
   }
   trustedtime::note();
   activityManager.goToSleep(fromTimeout);
+  // The reader has saved its place on the way out: send any queued Kimono
+  // Books progress over a short Wi-Fi session (only when there is some).
+  if (powerManager.getBatteryPercentage() >= 10) kimono::progress::flushAtSleep();
   // Reader exit may already have saved this state. Save after the sleep screen
   // appears, skipping an unchanged snapshot while still retrying failed saves.
   APP_STATE.saveToFile();
@@ -2141,6 +2145,9 @@ void setup() {
         break;
       case NetworkBootTarget::PLUGINS:
         launched = activityManager.goToPlugins(true);
+        break;
+      case NetworkBootTarget::KIMONO:
+        launched = activityManager.goToKimono(true);
         break;
       case NetworkBootTarget::KOREADER_SYNC:
         launched = startGlobalSyncProgress(true, decodeKOReaderSyncOrientation(snapshotPayload));

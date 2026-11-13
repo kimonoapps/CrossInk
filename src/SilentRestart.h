@@ -16,6 +16,7 @@ enum class NetworkBootTarget : uint32_t {
   MANAGE_FONTS = 7,
   DOWNLOAD_ASSETS = 8,
   PLUGINS = 9,
+  KIMONO = 10,
 };
 
 constexpr bool isNetworkBootTargetValue(const uint32_t value) {
@@ -28,6 +29,7 @@ constexpr bool isNetworkBootTargetValue(const uint32_t value) {
     case NetworkBootTarget::MANAGE_FONTS:
     case NetworkBootTarget::DOWNLOAD_ASSETS:
     case NetworkBootTarget::PLUGINS:
+    case NetworkBootTarget::KIMONO:
       return true;
   }
   return false;
@@ -40,7 +42,8 @@ static_assert(isNetworkBootTargetValue(static_cast<uint32_t>(NetworkBootTarget::
                   isNetworkBootTargetValue(static_cast<uint32_t>(NetworkBootTarget::FILE_TRANSFER)) &&
                   isNetworkBootTargetValue(static_cast<uint32_t>(NetworkBootTarget::MANAGE_FONTS)) &&
                   isNetworkBootTargetValue(static_cast<uint32_t>(NetworkBootTarget::DOWNLOAD_ASSETS)) &&
-                  isNetworkBootTargetValue(static_cast<uint32_t>(NetworkBootTarget::PLUGINS)),
+                  isNetworkBootTargetValue(static_cast<uint32_t>(NetworkBootTarget::PLUGINS)) &&
+                  isNetworkBootTargetValue(static_cast<uint32_t>(NetworkBootTarget::KIMONO)),
               "Every network boot target must pass RTC target validation");
 
 void silentRestart();                                            // home screen

@@ -29,4 +29,4 @@ void catalogCenteredBlock(UiAppHost<24, 6>::Screen& screen, std::initializer_lis
 // cancelAction is a real action, a Cancel button. A progress bar is shown when
 // the total is known (total > 0), otherwise a running byte count.
 void catalogDownloadScreen(UiAppHost<24, 6>::Screen& screen, const char* status, size_t progress, size_t total,
-                           freeink::ui::ActionId cancelAction = freeink::ui::NO_ACTION);
+                           freeink::ui::ActionId cancelAction = freeink::ui::NO_ACTION, const char* heading = nullptr);
